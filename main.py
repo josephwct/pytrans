@@ -1,4 +1,5 @@
 import ffmpeg
+import time
 
 from faster_whisper import WhisperModel
 
@@ -13,16 +14,16 @@ def extract_audio():
     return extracted_audio
 
 def transcribe(audio):
-    # model = WhisperModel("small")
+    #model = WhisperModel("small")
     model = WhisperModel("large-v3")
     segments, info = model.transcribe(audio)
     language = info[0]
+    counter = 1
     with open(f"audio-{input_video_name}.stl", "w", encoding="utf-8") as file:
-        file.write(f"Transcription language: {info[0]}\n")
         segments = list(segments)
         for segment in segments:
-            file.write("[%.2fs -> %.2fs] %s\n" %
-                       (segment.start, segment.end, segment.text))
+            file.write(f"{counter}\n{time.strftime('%H:%M:%S', time.gmtime(segment.start))} --> {time.strftime('%H:%M:%S', time.gmtime(segment.start))} \n{segment.text}\n\n")
+            counter += 1
     return language, segments
 
 def run():
